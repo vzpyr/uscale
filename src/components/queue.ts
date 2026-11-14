@@ -14,6 +14,7 @@ export function createQueue(): HTMLElement {
 
   downloadAllBtn.addEventListener('click', () => {
     const { images } = store.getState();
+    if (images.length < 2 || !images.every((img) => img.upscaledCanvas)) return;
     const upscaled = images.filter((img) => img.upscaledCanvas);
     upscaled.forEach((img, i) => {
       setTimeout(() => {
@@ -96,10 +97,11 @@ export function createQueue(): HTMLElement {
 
   const render = () => {
     const { images, activeImageId, isProcessing } = store.getState();
-    const hasUpscaled = images.some((img) => img.upscaledCanvas);
+    const canDownloadAll =
+      images.length >= 2 && images.every((img) => img.upscaledCanvas);
 
     clearBtn.disabled = isProcessing || images.length === 0;
-    downloadAllBtn.disabled = isProcessing || !hasUpscaled;
+    downloadAllBtn.disabled = isProcessing || !canDownloadAll;
 
     scrollContainer.innerHTML = '';
     if (images.length === 0) {

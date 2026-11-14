@@ -14,11 +14,14 @@ export function createHeader(): HTMLElement {
   header.appendChild(title);
   header.appendChild(toggleBtn);
 
-  store.subscribe(() => {
+  const render = () => {
     const { drawerOpen, isProcessing } = store.getState();
     toggleBtn.textContent = drawerOpen ? 'close' : 'queue/model';
     toggleBtn.disabled = isProcessing;
-  });
+  };
+
+  store.subscribe(render);
+  render();
 
   return header;
 }

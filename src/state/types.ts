@@ -16,17 +16,14 @@ export type ExecutionDevice = 'webgpu' | 'wasm';
 
 export interface UpscaleModelDef {
   id: string;
-  scale: number;
-  sizeDisplay: string;
-  fileName: string;
-  repo: string;
+  url: string;
+  bytes: number;
 }
 
 export interface AppState {
   images: UpscaleImage[];
   activeImageId: string | null;
   selectedModelId: string;
-  scaleMultiplier: number;
   tileSize: number;
   isProcessing: boolean;
   progressMessage: string;

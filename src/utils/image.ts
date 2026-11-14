@@ -15,9 +15,10 @@ export async function createFileBitmap(file: File): Promise<{
 }
 
 export function formatBytes(bytes: number): string {
-  if (bytes === 0) return '0 b';
+  if (bytes === 0) return '0b';
   const k = 1024;
   const sizes = ['b', 'kb', 'mb', 'gb'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
+  const i = Math.min(sizes.length - 1, Math.floor(Math.log(bytes) / Math.log(k)));
+  const value = bytes / Math.pow(k, i);
+  return `${value >= 10 ? Math.round(value) : parseFloat(value.toFixed(1))}${sizes[i]}`;
 }

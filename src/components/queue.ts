@@ -94,7 +94,7 @@ export function createQueue(): HTMLElement {
     store.addImages(items);
   }
 
-  store.subscribe(() => {
+  const render = () => {
     const { images, activeImageId, isProcessing } = store.getState();
     const hasUpscaled = images.some((img) => img.upscaledCanvas);
 
@@ -166,7 +166,10 @@ export function createQueue(): HTMLElement {
       item.appendChild(actionBox);
       scrollContainer.appendChild(item);
     }
-  });
+  };
+
+  store.subscribe(render);
+  render();
 
   return panel;
 }

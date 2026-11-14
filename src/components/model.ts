@@ -2,6 +2,7 @@ import { store } from '../state/store';
 import { el } from '../utils/dom';
 import { OFFICIAL_UPSCAYL_MODELS } from '../engine/models';
 import { upscaleImageAsync } from '../engine/session';
+import { formatBytes } from '../utils/image';
 
 export function createModel(): HTMLElement {
   const panel = el('div', 'panel-bottom');
@@ -16,24 +17,12 @@ export function createModel(): HTMLElement {
   for (const model of OFFICIAL_UPSCAYL_MODELS) {
     const opt = el('option');
     opt.value = model.id;
-    opt.textContent = `${model.id} (${model.sizeDisplay})`;
+    opt.textContent = `${model.id} (${formatBytes(model.bytes)})`;
     select.appendChild(opt);
   }
 
   select.addEventListener('change', () => {
     store.setSelectedModel(select.value);
-  });
-
-  const scaleRow = el('div', 'btn-group');
-  const scaleButtons: { mult: number; btn: HTMLButtonElement }[] = [
-    { mult: 2, btn: el('button', 'btn-segmented', '2x') as HTMLButtonElement },
-    { mult: 3, btn: el('button', 'btn-segmented', '3x') as HTMLButtonElement },
-    { mult: 4, btn: el('button', 'btn-segmented', '4x') as HTMLButtonElement },
-  ];
-
-  scaleButtons.forEach(({ mult, btn }) => {
-    btn.addEventListener('click', () => store.setScaleMultiplier(mult));
-    scaleRow.appendChild(btn);
   });
 
   const tileRow = el('div', 'btn-group');
@@ -76,7 +65,6 @@ export function createModel(): HTMLElement {
   actionRow.appendChild(upscaleAllBtn);
 
   body.appendChild(select);
-  body.appendChild(scaleRow);
   body.appendChild(tileRow);
   body.appendChild(backendRow);
   body.appendChild(statusBox);
@@ -86,7 +74,7 @@ export function createModel(): HTMLElement {
   panel.appendChild(body);
 
   async function processImage(img: any, prefix = '') {
-    const { selectedModelId, device, scaleMultiplier, tileSize } = store.getState();
+    const { selectedModelId, device, tileSize } = store.getState();
     const model = OFFICIAL_UPSCAYL_MODELS.find((m) => m.id === selectedModelId);
     if (!model) return;
 
@@ -95,7 +83,6 @@ export function createModel(): HTMLElement {
       device: device === 'webgpu' ? 'webgpu' : 'wasm',
       tileSize,
       bitmap: img.originalBitmap,
-      scaleMultiplier,
       onProgress: (msg) => {
         store.setProgressMessage(prefix ? `${prefix} • ${msg}` : msg);
       },
@@ -145,7 +132,6 @@ export function createModel(): HTMLElement {
       isProcessing,
       progressMessage,
       selectedModelId,
-      scaleMultiplier,
       tileSize,
       images,
       activeImageId,
@@ -160,11 +146,6 @@ export function createModel(): HTMLElement {
 
     select.value = selectedModelId;
     select.disabled = isProcessing;
-
-    scaleButtons.forEach(({ mult, btn }) => {
-      btn.disabled = isProcessing;
-      btn.classList.toggle('active', scaleMultiplier === mult);
-    });
 
     tileButtons.forEach(({ size, btn }) => {
       btn.disabled = isProcessing;

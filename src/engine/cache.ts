@@ -1,11 +1,9 @@
 const CACHE_NAME = 'uscale-models-v1';
 
 export async function fetchModelBuffer(
-  repo: string,
-  fileName: string,
+  url: string,
   onProgress?: (received: number, total: number) => void
 ): Promise<ArrayBuffer> {
-  const url = `https://huggingface.co/${repo}/resolve/main/${fileName}`;
 
   if (typeof caches !== 'undefined') {
     try {

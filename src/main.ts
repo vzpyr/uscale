@@ -28,7 +28,7 @@ async function bootstrap() {
   app.appendChild(header);
   app.appendChild(mainLayout);
 
-  store.subscribe(() => {
+  const render = () => {
     const { isProcessing, drawerOpen } = store.getState();
     if (isProcessing) {
       app.classList.add('app-locked');
@@ -41,7 +41,10 @@ async function bootstrap() {
     } else {
       leftStack.classList.remove('open');
     }
-  });
+  };
+
+  store.subscribe(render);
+  render();
 }
 
 bootstrap();

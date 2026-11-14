@@ -158,6 +158,7 @@ export function createViewer(): HTMLElement {
   }
 
   store.subscribe(render);
+  render();
 
   return container;
 }

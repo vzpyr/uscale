@@ -6,8 +6,7 @@ class Store {
   private state: AppState = {
     images: [],
     activeImageId: null,
-    selectedModelId: 'upscayl-standard',
-    scaleMultiplier: 4,
+    selectedModelId: 'upscayl-standard-4x',
     tileSize: 256,
     isProcessing: false,
     progressMessage: '',
@@ -40,11 +39,6 @@ class Store {
 
   setSelectedModel(selectedModelId: string): void {
     this.state = { ...this.state, selectedModelId };
-    this.notify();
-  }
-
-  setScaleMultiplier(scaleMultiplier: number): void {
-    this.state = { ...this.state, scaleMultiplier };
     this.notify();
   }
 

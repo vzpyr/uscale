@@ -1,5 +1,6 @@
 import * as ort from 'onnxruntime-web/webgpu';
 import { UpscaleModelDef } from '../state/types';
+import { MODEL_SCALE } from './models';
 import { fetchModelBuffer } from './cache';
 import { computeAdaptiveTiles } from './tiler';
 import { bitmapToFloatTensor, floatTensorToCanvas } from './tensor';
@@ -19,7 +20,7 @@ async function getInferenceSession(
   const existing = sessionCache.get(cacheKey);
   if (existing) return existing;
 
-  const buffer = await fetchModelBuffer(model.repo, model.fileName, (rec, tot) => {
+  const buffer = await fetchModelBuffer(model.url, (rec, tot) => {
     if (tot > 0) onProgress(Math.round((rec / tot) * 100));
   });
 
@@ -34,7 +35,7 @@ async function getInferenceSession(
 }
 
 self.onmessage = async (e: MessageEvent) => {
-  const { id, type, model, device, tileSize, bitmap, scaleMultiplier } = e.data;
+  const { id, type, model, device, tileSize, bitmap } = e.data;
   if (type !== 'upscale') return;
 
   try {
@@ -46,7 +47,7 @@ self.onmessage = async (e: MessageEvent) => {
 
     const width = bitmap.width;
     const height = bitmap.height;
-    const modelScale = model.scale;
+    const modelScale = MODEL_SCALE;
 
     const targetCanvas = new OffscreenCanvas(width * modelScale, height * modelScale);
     const tiles = computeAdaptiveTiles(width, height, tileSize);
@@ -71,22 +72,7 @@ self.onmessage = async (e: MessageEvent) => {
 
     bitmap.close();
 
-    let finalCanvas = targetCanvas;
-    if (scaleMultiplier !== modelScale) {
-      const rescaledCanvas = new OffscreenCanvas(
-        Math.round(width * scaleMultiplier),
-        Math.round(height * scaleMultiplier)
-      );
-      const ctx = rescaledCanvas.getContext('2d');
-      if (ctx) {
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(targetCanvas, 0, 0, rescaledCanvas.width, rescaledCanvas.height);
-        finalCanvas = rescaledCanvas;
-      }
-    }
-
-    const blob = await finalCanvas.convertToBlob({ type: 'image/png' });
+    const blob = await targetCanvas.convertToBlob({ type: 'image/png' });
     const outputBitmap = await createImageBitmap(blob);
 
     self.postMessage(
@@ -96,7 +82,7 @@ self.onmessage = async (e: MessageEvent) => {
         bitmap: outputBitmap,
         sizeBytes: blob.size,
       },
-      [outputBitmap]
+      { transfer: [outputBitmap] }
     );
   } catch (err: any) {
     self.postMessage({ id, type: 'error', error: err?.message || 'upscale failed' });

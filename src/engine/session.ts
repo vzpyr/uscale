@@ -15,7 +15,6 @@ export interface UpscaleJobOptions {
   device: 'webgpu' | 'wasm';
   tileSize: number;
   bitmap: ImageBitmap;
-  scaleMultiplier: number;
   onProgress: (message: string) => void;
 }
 
@@ -57,7 +56,6 @@ export function upscaleImageAsync(
           model: options.model,
           device: options.device,
           tileSize: options.tileSize,
-          scaleMultiplier: options.scaleMultiplier,
           bitmap: clonedBitmap,
         },
         [clonedBitmap]

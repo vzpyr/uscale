@@ -14,8 +14,18 @@ export const OFFICIAL_UPSCAYL_MODELS: UpscaleModelDef[] = [
     bytes: 67167470,
   },
   {
+    id: 'upscayl-lite-4x',
+    url: 'https://huggingface.co/huggingworld/onnx-image-models/resolve/main/upscayl-lite-4x.onnx',
+    bytes: 4868758,
+  },
+  {
     id: 'upscayl-remacri-4x',
     url: 'https://huggingface.co/huggingworld/onnx-image-models/resolve/main/upscayl-remacri-4x.onnx',
+    bytes: 67167470,
+  },
+  {
+    id: 'upscayl-standard-4x',
+    url: 'https://huggingface.co/huggingworld/onnx-image-models/resolve/main/upscayl-standard-4x.onnx',
     bytes: 67167470,
   },
   {
@@ -26,16 +36,6 @@ export const OFFICIAL_UPSCAYL_MODELS: UpscaleModelDef[] = [
   {
     id: 'upscayl-ultrasharp-4x',
     url: 'https://huggingface.co/huggingworld/onnx-image-models/resolve/main/upscayl-ultrasharp-4x.onnx',
-    bytes: 67167470,
-  },
-  {
-    id: 'upscayl-lite-4x',
-    url: 'https://huggingface.co/huggingworld/onnx-image-models/resolve/main/upscayl-lite-4x.onnx',
-    bytes: 4868758,
-  },
-  {
-    id: 'upscayl-standard-4x',
-    url: 'https://huggingface.co/huggingworld/onnx-image-models/resolve/main/upscayl-standard-4x.onnx',
     bytes: 67167470,
   },
 ];
